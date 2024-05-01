@@ -12,6 +12,11 @@ var cube, draughts, mouse, raycaster;
 var reefs = [];
 var reefsMaterial = [];
 
+// var audio = document.createElement("audio");
+// audio.src = "ocean.mp3";
+// audio.loop = true;
+// audio.autoplay = true;
+
 mouse = new THREE.Vector2();
 raycaster = new THREE.Raycaster();
 
@@ -33,7 +38,7 @@ let canvas = renderer.domElement;
 canvas.id = "threeCanvas";
 // Add the renderer's canvas element to the DOM
 document.body.appendChild(canvas);
-
+// document.body.appendChild(audio);
 // Create a new GLTFLoader instance to load the 3D model
 const loader = new GLTFLoader();
 
@@ -50,13 +55,14 @@ const geometry = new THREE.SphereGeometry(500, 32, 32);
 geometry.scale(-1, 1, 1);
 
 function init3d() {
-  const geometryyy = new THREE.BoxGeometry(50, 0.2, 50);
+  const geometryyy = new THREE.BoxGeometry(50, 2, 15);
   let base_texture = new THREE.TextureLoader().load("water.jpg");
   const materialll = new THREE.MeshBasicMaterial({ map: base_texture });
 
   cube = new THREE.Mesh(geometryyy, materialll);
   cube.position.x = 0;
-  cube.position.y = 5;
+  cube.position.y = 8;
+  cube.position.z = -5;
   scene.add(cube);
 
   let bgGeometery = new THREE.SphereGeometry(400, 200, 40);
@@ -111,21 +117,124 @@ camera.position.set(5, 30, 30);
 // Update the controls
 controls.update();
 
+// function hoverModel() {
+//   raycaster.setFromCamera(mouse, camera);
+//   const intersects = raycaster.intersectObjects(reefs, true);
+//   reefs.forEach((reef) => {
+//     reef.material.color.set(0xffffff);
+//   });
+//   if (intersects.length > 0) {
+//     intersects[0].object.material.color.set(0xff0000);
+//   }
+
+//   //   tooltip.textContent = "Model Information: " + intersectedObject.reef; // Customize this text
+//   //   tooltip.style.display = "block";
+//   //   tooltip.style.left = event.clientX + 15 + "px";
+//   //   tooltip.style.top = event.clientY + 15 + "px";
+// }
+
+// function hoverModel() {
+//   raycaster.setFromCamera(mouse, camera);
+//   const intersects = raycaster.intersectObjects(reefs, true);
+
+//   reefs.forEach((reef) => {
+//     reef.material.color.set(0xabf5e0);
+//     reef.scale.set(0.1, 0.1, 0.1);
+//   });
+
+//   if (intersects.length > 0) {
+//     const intersectedObject = intersects[0].object;
+//     // Change color to highlight
+//     intersectedObject.scale.set(1, 1, 1);
+//     const tooltip = document.getElementById("tooltip");
+//     // Customize the tooltip text based on the name of the intersected object
+//     if (intersectedObject.name === "Cylinder") {
+//       tooltip.textContent =
+//         "Reefs are often called the rainforests of the sea.";
+//       intersectedObject.material.color.set(0x52faf4);
+//     } else if (intersectedObject.name === "Circle") {
+//       tooltip.textContent =
+//         "About 25% of the ocean's fish depend on healthy coral reefs. ";
+//       intersectedObject.material.color.set(0x74fa52);
+//       // intersectedObject.scale.set(12, 12, 12);
+//     } else if (intersectedObject.name === "Circle002") {
+//       tooltip.textContent =
+//         "Fishes and other organisms shelter, find food, reproduce, and rear their young in the many nooks and crannies formed by corals.";
+//       intersectedObject.material.color.set(0xf27dff);
+//       // intersectedObject.scale.set(12, 12, 12);
+//     }
+//     tooltip.style.display = "block";
+//     tooltip.style.left = event.clientX + 15 + "px";
+//     tooltip.style.top = event.clientY + 15 + "px";
+//   } else {
+//     // Hide tooltip if no intersections
+//     const tooltip = document.getElementById("tooltip");
+//     tooltip.style.display = "none";
+//   }
+
 function hoverModel() {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(reefs, true);
-  reefs.forEach((reef) => {
-    reef.material.color.set(0xffffff);
-  });
-  if (intersects.length > 0) {
-    intersects[0].object.material.color.set(0xff0000);
-  }
 
-  //   tooltip.textContent = "Model Information: " + intersectedObject.reef; // Customize this text
-  //   tooltip.style.display = "block";
-  //   tooltip.style.left = event.clientX + 15 + "px";
-  //   tooltip.style.top = event.clientY + 15 + "px";
+  // Reset all reefs to their original scale
+  reefs.forEach((reef) => {
+    reef.scale.set(0.2, 0.2, 0.2);
+    reef.material.color.set(0xabf5e0);
+    // Assuming 1, 1, 1 is the original scale
+  });
+
+  if (intersects.length > 0) {
+    const intersectedObject = intersects[0].object;
+    intersectedObject.scale.set(0.15, 0.15, 0.15); // Increase the scale for the hovered object
+
+    if (intersectedObject.name === "Cylinder") {
+      intersectedObject.material.color.set(0x52faf4);
+      const tooltip = document.getElementById("tooltip");
+      tooltip.textContent =
+        "Reefs are often called the rainforests of the sea.";
+      tooltip.style.display = "block";
+    }
+
+    if (intersectedObject.name === "Circle") {
+      intersectedObject.material.color.set(0x82e2ff);
+      const tooltip = document.getElementById("tooltip");
+      tooltip.textContent =
+        "About 25% of the ocean's fish depend on healthy coral reefs. ";
+      //       intersectedObject.material.color.set(0x74fa52)";
+      tooltip.style.display = "block";
+    }
+
+    if (intersectedObject.name === "Circle002") {
+      intersectedObject.material.color.set(0xf82bff);
+      const tooltip = document.getElementById("tooltip");
+      tooltip.textContent =
+        "Fishes and other organisms shelter, find food, reproduce, and rear their young in the many nooks and crannies formed by corals.";
+      tooltip.style.display = "block";
+    }
+
+    // Set tooltip text based on the intersected object
+  } else {
+    const tooltip = document.getElementById("tooltip");
+    tooltip.style.display = "none";
+  }
 }
+
+// if (intersects.length > 0) {
+//   const intersectedObject = intersects[0].object;
+//   intersectedObject.material.color.set(0x9bf2fa);
+
+//   // Set tooltip text based on the intersected object
+//   const tooltip = document.getElementById("tooltip");
+
+//   tooltip.textContent = "Model Information: " + intersectedObject.name;
+//   tooltip.style.display = "block";
+// } else {
+//   // Hide tooltip if no intersections
+//   const tooltip = document.getElementById("tooltip");
+//   tooltip.style.display = "none";
+// }
+// }
+
 // Define the animate function to continuously render the scene
 function animate() {
   requestAnimationFrame(animate);
@@ -152,15 +261,29 @@ function createPanoVideo(filename) {
   scene.add(mesh);
 }
 
-function onMouseMove(event) {
-  // calculate mouse position in normalized device coordinates
-  // (-1 to +1) for both components
+// function onMouseMove(event) {
+//   // calculate mouse position in normalized device coordinates
+//   // (-1 to +1) for both components
 
+//   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+//   if (document.getElementById("tooltip").style.display !== "none") {
+//     const tooltip = document.getElementById("tooltip");
+//     tooltip.style.left = event.clientX + 15 + "px";
+//     tooltip.style.top = event.clientY + 15 + "px";
+//   }
+// }
+// window.addEventListener("mousemove", onMouseMove, false);
+
+function onMouseMove(event) {
+  // Update mouse position in normalized device coordinates
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  if (document.getElementById("tooltip").style.display !== "none") {
-    const tooltip = document.getElementById("tooltip");
+  // Update tooltip position
+  const tooltip = document.getElementById("tooltip");
+  if (tooltip.style.display !== "none") {
     tooltip.style.left = event.clientX + 15 + "px";
     tooltip.style.top = event.clientY + 15 + "px";
   }
